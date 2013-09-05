@@ -21,8 +21,8 @@ namespace WebAPIDemo.Models
                 connection = "mongodb://localhost:27017";
             }
 
-            _server = MongoServer.Create(connection);
-            _database = _server.GetDatabase("Contacts", SafeMode.True);
+            _server = new MongoClient(connection).GetServer();
+            _database = _server.GetDatabase("Contacts", WriteConcern.Unacknowledged);
             _contacts = _database.GetCollection<Contact>("contacts");
 
             // Reset database and add some default entries
@@ -61,7 +61,7 @@ namespace WebAPIDemo.Models
         public bool RemoveContact(string id)
         {
             IMongoQuery query = Query.EQ("_id", id);
-            SafeModeResult result = _contacts.Remove(query);
+            WriteConcernResult result = _contacts.Remove(query);
             return result.DocumentsAffected == 1;
         }
 
@@ -74,7 +74,7 @@ namespace WebAPIDemo.Models
                 .Set("LastModified", DateTime.UtcNow)
                 .Set("Name", item.Name)
                 .Set("Phone", item.Phone);
-            SafeModeResult result = _contacts.Update(query, update);
+            WriteConcernResult result = _contacts.Update(query, update);
             return result.UpdatedExisting;
         }
 
