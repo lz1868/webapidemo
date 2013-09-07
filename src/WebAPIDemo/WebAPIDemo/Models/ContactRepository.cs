@@ -4,7 +4,6 @@ using MongoDB.Driver.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace WebAPIDemo.Models
 {
@@ -22,7 +21,7 @@ namespace WebAPIDemo.Models
             }
 
             _server = new MongoClient(connection).GetServer();
-            _database = _server.GetDatabase("Contacts", WriteConcern.Unacknowledged);
+            _database = _server.GetDatabase("Contacts");
             _contacts = _database.GetCollection<Contact>("contacts");
 
             // Reset database and add some default entries
@@ -77,7 +76,5 @@ namespace WebAPIDemo.Models
             WriteConcernResult result = _contacts.Update(query, update);
             return result.UpdatedExisting;
         }
-
-
     }
 }
